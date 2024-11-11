@@ -67,7 +67,7 @@ void nicola_on(void) {
     nicola_clear();
     layer_on(nicola_layer);
 
-    tap_code(KC_GRV);
+//    tap_code(KC_GRV);
 }
 
 void nicola_off(void) {
@@ -75,7 +75,7 @@ void nicola_off(void) {
     nicola_clear();
     layer_off(nicola_layer);
 
-    tap_code(KC_GRV);
+//    tap_code(KC_GRV);
 }
 
 // 親指シフトの状態
