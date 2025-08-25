@@ -18,7 +18,12 @@
 
 // NICOLA親指シフト
 #include "nicola.h"
+#ifdef CONSOLE_ENABLE
+  #include <print.h>
+#endif
 NGKEYS nicola_keys;
+
+bool ime_on = false;
 // NICOLA親指シフト
 
 enum layers {
@@ -51,20 +56,20 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         _______,    _______,  _______,            _______,  _______,  _______,             _______,            _______,            _______,            _______,  _______,  _______),
 
     [WIN_BASE] = LAYOUT_90_ansi(
-        KC_MUTE,    KC_ESC,   KC_F1,    KC_F2,    KC_F3,    KC_F4,    KC_F5,     KC_F6,    KC_F7,    KC_F8,    KC_F9,    KC_F10,   KC_F11,   KC_F12,   KC_INS,             KC_DEL,
-        MC_1,       KC_GRV,   KC_1,     KC_2,     KC_3,     KC_4,     KC_5,      KC_6,     KC_7,     KC_8,     KC_9,     KC_0,     KC_MINS,  KC_EQL,   KC_BSPC,            KC_PGUP,
-        MC_2,       KC_TAB,   KC_Q,     KC_W,     KC_E,     KC_R,     KC_T,      KC_Y,     KC_U,     KC_I,     KC_O,     KC_P,     KC_LBRC,  KC_RBRC,  KC_BSLS,            KC_PGDN,
-        MC_3,       KC_CAPS,  KC_A,     KC_S,     KC_D,     KC_F,     KC_G,      KC_H,     KC_J,     KC_K,     KC_L,     KC_SCLN,  KC_QUOT,            KC_ENT,             KC_HOME,
-        MC_4,       KC_LSFT,            KC_Z,     KC_X,     KC_C,     KC_V,      KC_B,     KC_B,     KC_N,     KC_M,     KC_COMM,  KC_DOT,   KC_SLSH,  KC_RSFT,  KC_UP,
-        MC_5,       KC_LCTL,  KC_LWIN,            KC_LALT,  KC_SPC,  MO(WIN_FN),           KC_SPC,             KC_RALT,            KC_RCTL,            KC_LEFT,  KC_DOWN,  KC_RGHT),
+        KC_MUTE,    KC_ESC,    KC_F1,    KC_F2,    KC_F3,    KC_F4,    KC_F5,     KC_F6,    KC_F7,    KC_F8,    KC_F9,    KC_F10,   KC_F11,   KC_F12,   KC_INS,             KC_DEL,
+        MC_1,       KC_GRV,    KC_1,     KC_2,     KC_3,     KC_4,     KC_5,      KC_6,     KC_7,     KC_8,     KC_9,     KC_0,     KC_MINS,  KC_EQL,   KC_BSPC,            KC_PGUP,
+        MC_2,       KC_TAB,    KC_Q,     KC_W,     KC_E,     KC_R,     KC_T,      KC_Y,     KC_U,     KC_I,     KC_O,     KC_P,     KC_LBRC,  KC_RBRC,  KC_BSLS,            KC_PGDN,
+        MC_3,       KC_CAPS,   KC_A,     KC_S,     KC_D,     KC_F,     KC_G,      KC_H,     KC_J,     KC_K,     KC_L,     KC_SCLN,  KC_QUOT,            KC_ENT,             KC_HOME,
+        MC_4,       KC_LSFT,             KC_Z,     KC_X,     KC_C,     KC_V,      KC_B,     KC_B,     KC_N,     KC_M,     KC_COMM,  KC_DOT,   KC_SLSH,  KC_RSFT,  KC_UP,
+        MC_5,       KC_LCTL,   KC_LWIN,            KC_LALT,  KC_SPC,  MO(WIN_FN),           KC_SPC,             MC_4,               KC_RCTL,            KC_LEFT,  KC_DOWN,  KC_RGHT),
 
     [WIN_FN] = LAYOUT_90_ansi(
         BL_TOGG,    _______,  KC_BRID,  KC_BRIU,  KC_TASK,  KC_FILE,  BL_DOWN,   BL_UP,    KC_MPRV,  KC_MPLY,  KC_MNXT,  KC_MUTE,  KC_VOLD,   KC_VOLU,  _______,            _______,
-        _______,    _______,  BT_HST1,  BT_HST2,  BT_HST3,  _______,  _______,   _______,  _______,  _______,  _______,  _______,  KC_UNDS,   KC_INT1,  _______,            _______,
+		KC_GRV,     _______,  BT_HST1,  BT_HST2,  BT_HST3,  _______,  _______,   _______,  _______,  _______,  _______,  _______,  KC_UNDS,   KC_INT1,  _______,            _______,
         _______,    BL_TOGG,  BL_STEP,  BL_UP,    _______,  _______,  _______,   _______,  _______,  _______,  _______,  _______,  _______,   _______,  KC_INT3,            _______,
         _______,    _______,  _______,  BL_DOWN,  _______,  _______,  _______,   _______,  _______,  _______,  _______,  _______,  _______,             _______,            KC_END,
         _______,    _______,            _______,  _______,  _______,  _______,   BAT_LVL,  BAT_LVL,  NK_TOGG,  _______,  _______,  _______,   _______,  _______,  _______,
-        _______,    _______,  _______,            KC_LNG1,  _______,  _______,             _______,            _______,            KC_INT2,             _______,  _______,  _______),
+        _______,    _______,  _______,            KC_F24,   _______,  _______,             _______,            _______,            KC_F23,              _______,  _______,  _______),
     // NICOLA親指シフト
     [MAC_OYA] = LAYOUT_90_ansi(
         KC_MUTE,    KC_ESC,   KC_BRID,  KC_BRIU,  KC_MCTL,  KC_LPAD,  BL_DOWN,   BL_UP,    KC_MPRV,  KC_MPLY,  KC_MNXT,  KC_MUTE,  KC_VOLD,  KC_VOLU,  KC_INS,             KC_DEL,
@@ -72,15 +77,15 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         MC_2,       KC_TAB,   NG_Q,     NG_W,     NG_E,     NG_R,     NG_T,      NG_Y,     NG_U,     NG_I,     NG_O,     NG_P,     NG_LBRC,  NG_RBRC,  KC_BSLS,            KC_PGDN,
         MC_3,       KC_CAPS,  NG_A,     NG_S,     NG_D,     NG_F,     NG_G,      NG_H,     NG_J,     NG_K,     NG_L,     NG_SCLN,  NG_QUOT,            KC_ENT,             KC_HOME,
         MC_4,       KC_LSFT,            NG_Z,     NG_X,     NG_C,     NG_V,      NG_B,     NG_B,     NG_N,     NG_M,     NG_COMM,  NG_DOT,   NG_SLSH,  KC_RSFT,  KC_UP,
-        MC_5,       KC_LCTL,  KC_LOPTN,           KC_LCMMD, NG_SHFTL, MO(MAC_FN),          NG_SHFTR,           KC_SPC,             KC_RCTL,            KC_LEFT,  KC_DOWN,  KC_RGHT),
+        MC_5,       KC_LCTL,  KC_LOPTN,           KC_LCMMD, NG_SHFTL, MO(MAC_FN),          NG_SHFTR,           MC_5,               KC_RCTL,            KC_LEFT,  KC_DOWN,  KC_RGHT),
 
     [WIN_OYA] = LAYOUT_90_ansi(
-        KC_MUTE,    KC_ESC,   KC_F1,    KC_F2,    KC_F3,    KC_F4,    KC_F5,     KC_F6,    KC_F7,    KC_F8,    KC_F9,    KC_F10,   KC_F11,   KC_F12,   KC_INS,             KC_DEL,
-        MC_1,       KC_GRV,   NG_1,     NG_2,     NG_3,     NG_4,     NG_5,      NG_6,     NG_7,     NG_8,     NG_9,     NG_0,     NG_MINS,  NG_EQL,   KC_BSPC,            KC_PGUP,
-        MC_2,       KC_TAB,   NG_Q,     NG_W,     NG_E,     NG_R,     NG_T,      NG_Y,     NG_U,     NG_I,     NG_O,     NG_P,     NG_LBRC,  NG_RBRC,  KC_BSLS,            KC_PGDN,
-        MC_3,       KC_CAPS,  NG_A,     NG_S,     NG_D,     NG_F,     NG_G,      NG_H,     NG_J,     NG_K,     NG_L,     NG_SCLN,  NG_QUOT,            KC_ENT,             KC_HOME,
-        MC_4,       KC_LSFT,            NG_Z,     NG_X,     NG_C,     NG_V,      NG_B,     NG_B,     NG_N,     NG_M,     NG_COMM,  NG_DOT,   NG_SLSH,  KC_RSFT,  KC_UP,
-        MC_5,       KC_LCTL,  KC_LWIN,            KC_LALT,  NG_SHFTL, MO(WIN_FN),          NG_SHFTR,           KC_SPC,             KC_RCTL,            KC_LEFT,  KC_DOWN,  KC_RGHT)
+        KC_MUTE,    KC_ESC,    KC_F1,    KC_F2,    KC_F3,    KC_F4,    KC_F5,     KC_F6,    KC_F7,    KC_F8,    KC_F9,    KC_F10,   KC_F11,   KC_F12,   KC_INS,             KC_DEL,
+        MC_1,       KC_GRV,    NG_1,     NG_2,     NG_3,     NG_4,     NG_5,      NG_6,     NG_7,     NG_8,     NG_9,     NG_0,     NG_MINS,  NG_EQL,   KC_BSPC,            KC_PGUP,
+        MC_2,       KC_TAB,    NG_Q,     NG_W,     NG_E,     NG_R,     NG_T,      NG_Y,     NG_U,     NG_I,     NG_O,     NG_P,     NG_LBRC,  KC_RBRC,  KC_BSLS,            KC_PGDN,
+        MC_3,       KC_CAPS,   NG_A,     NG_S,     NG_D,     NG_F,     NG_G,      NG_H,     NG_J,     NG_K,     NG_L,     NG_SCLN,  KC_QUOT,            KC_ENT,             KC_HOME,
+        MC_4,       KC_LSFT,             NG_Z,     NG_X,     NG_C,     NG_V,      NG_B,     NG_B,     NG_N,     NG_M,     NG_COMM,  NG_DOT,   NG_SLSH,  KC_RSFT,  KC_UP,
+        MC_5,       KC_LCTL,   KC_LWIN,            KC_LALT,  NG_SHFTL, MO(WIN_FN),          NG_SHFTR,           KC_SPC,             KC_RCTL,            KC_LEFT,  KC_DOWN,  KC_RGHT)
     // NICOLA親指シフト
 };
 
@@ -103,34 +108,67 @@ void matrix_init_user(void) {
     // NICOLA親指シフト
 }
 
+void keyboard_post_init_user(void) {
+    ime_on = false;                // IME OFF を初期状態に
+    nicola_off();
+    layer_off(WIN_OYA);
+}
+
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
-    case KC_LNG1:
-//    case MC_4:
+    case IME_TOGGLE:
+        if (record->event.pressed) {
+            // IMEトグル送信（KC_GRVをPCへ送信）
+            tap_code(KC_GRV);
+            wait_ms(100);     // 少し待ってから
+
+            // 状態切り替え
+            ime_on = !ime_on;
+
+            if (ime_on) {
+                // NICOLA親指シフト
+                nicola_on();               // 独自の親指シフトON処理
+                // NICOLA親指シフト
+            } else {
+                // NICOLA親指シフト
+                nicola_off();              // 独自の親指シフトOFF処理
+                // NICOLA親指シフト
+            }
+        }
+        return false; // これで KC_GRV の二重送信を防ぐ
+    case KC_F24:
+    case MC_5:
         if (record->event.pressed) {
             // NICOLA親指シフト
             nicola_off();
             // NICOLA親指シフト
         }
         return false;
-        break;
-    case KC_INT2:
-//    case MC_5:
+
+    case KC_F23:
+    case MC_4:
         if (record->event.pressed) {
             // NICOLA親指シフト
             nicola_on();
             // NICOLA親指シフト
         }
         return false;
-        break;
     }
 
     // NICOLA親指シフト
     bool a = true;
     if (nicola_state()) {
+#ifdef CONSOLE_ENABLE
+        uprintf(" nicola_state");
+#endif
         nicola_mode(keycode, record);
         a = process_nicola(keycode, record);
     }
+#ifdef CONSOLE_ENABLE
+    else {
+        uprintf("not nicola_state");
+    }
+#endif
     if (a == false) return false;
     // NICOLA親指シフト
 

@@ -29,7 +29,8 @@ void set_nicola(uint8_t);
 typedef enum nicola_keycodes {
   NG_TOP = SAFE_RANGE,
   NG_M_TOP = NG_TOP,
-  NG_1 = NG_TOP,
+  IME_TOGGLE = NG_TOP,
+  NG_1,
   NG_2,
   NG_3,
   NG_4,
