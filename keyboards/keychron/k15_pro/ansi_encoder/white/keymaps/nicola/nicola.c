@@ -115,8 +115,8 @@ void nicola_mode(uint16_t keycode, keyrecord_t *record) {
                 uprintf("press");
 #endif
                 n_modifier++;
-                nicola_off();
-//                layer_off(nicola_layer);
+//                nicola_off();
+                layer_off(nicola_layer);
                 last_modifier_time = timer_read();
             } else {
 #ifdef CONSOLE_ENABLE
@@ -128,8 +128,8 @@ void nicola_mode(uint16_t keycode, keyrecord_t *record) {
                     uprintf("nicola on");
 #endif
                     last_modifier_time = timer_read();
-                    nicola_on();
-//                    layer_on(nicola_layer);
+//                    nicola_on();
+                    layer_on(nicola_layer);
                 }
             }
             break;
